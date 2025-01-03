@@ -17,11 +17,11 @@ run_input = {
     "includePriceHistory": False,
     "listUrls": [
         {
-            "url": "https://www.rightmove.co.uk/property-to-rent/find.html?locationIdentifier=REGION%5E61537&numberOfPropertiesPerPage=24&radius=0.0&sortType=2&index=0&includeLetAgreed=false&viewType=LIST&channel=RENT&areaSizeUnit=sqft&currencyCode=GBP&isFetching=false&searchLocation=Redbridge+%28London+Borough%29&useLocationIdentifier=true&previousSearchLocation=null&_includeLetAgreed=on",
+            "url": "https://www.rightmove.co.uk/property-to-rent/find.html?locationIdentifier=REGION%5E85233&propertyTypes=&includeLetAgreed=false&mustHave=&dontShow=&furnishTypes=&keywords=",
             "method": "GET"
         },
         {
-            "url": "https://www.rightmove.co.uk/property-to-rent/find.html?locationIdentifier=REGION%5E61400&numberOfPropertiesPerPage=24&radius=0.0&sortType=2&index=0&includeLetAgreed=false&viewType=LIST&channel=RENT&areaSizeUnit=sqft&currencyCode=GBP&isFetching=false&searchLocation=Barking+And+Dagenham+%28London+Borough%29&useLocationIdentifier=true&previousSearchLocation=null&_includeLetAgreed=on",
+            "url": "https://www.rightmove.co.uk/property-to-rent/find.html?locationIdentifier=REGION%5E93938&sortType=2&propertyTypes=&includeLetAgreed=false&mustHave=&dontShow=&furnishTypes=&keywords=",
             "method": "GET"
         }
     ],
@@ -30,6 +30,7 @@ run_input = {
         "useApifyProxy": True
     }
 }
+
 
 # Optional: Return the data
 

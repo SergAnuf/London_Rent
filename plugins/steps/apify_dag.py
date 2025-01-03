@@ -40,11 +40,12 @@ class ApifyTaskOperator(BaseOperator):
         items = []
         for item in dataset.iterate_items():
             items.append(item) 
-            
-        results_data = pd.DataFrame(items)
         
-        self.log.info(f"Pu8956shing data to XCom: {result_data.head()}")
-        context['ti'].xcom_push(key='apify_result', value=result_data.to_json(orient='records'))
+        # Convert list of dictionaries to a DataFrame
+        results_data = pd.DataFrame(items)
+
+        self.log.info(f"Pushing data to XCom: {results_data.head()}")  # Preview the DataFrame
+        context['ti'].xcom_push(key='apify_result', value=results_data.to_json(orient='records'))  # Push as JSON string
 
 
 
