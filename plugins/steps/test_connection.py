@@ -9,11 +9,11 @@ def create_table():
         # ваш код здесь тоже #
         metadata = MetaData()
         salaries_table = Table(
-         'raw_data',
+         'raw_data2',
           metadata,
           Column('id', Integer, primary_key=True, autoincrement=True),
           Column('price', Float),
-          UniqueConstraint('id', name='unique_flat_id')
+          UniqueConstraint('id', name='hi_flat_id')
         ) 
         hook = PostgresHook('ai_agency')
         metadata.create_all(hook.get_sqlalchemy_engine())
@@ -34,7 +34,7 @@ def load(**kwargs):
 
     # Insert rows into the table with UPSERT logic
     insert_query = """
-    INSERT INTO raw_data (id, price)
+    INSERT INTO raw_data2 (id, price)
     VALUES (%s, %s)
     ON CONFLICT (id) DO UPDATE
     SET price = EXCLUDED.price;
