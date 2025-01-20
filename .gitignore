@@ -5,3 +5,4 @@ logs
 plugins/steps/__pycache__
 .rent_env
 data
+notebooks/catboost_info
