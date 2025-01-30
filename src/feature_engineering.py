@@ -10,6 +10,7 @@ from geopy.distance import geodesic
 
 # File handling
 import os
+import yaml
 
 threshold = 10000
 
@@ -165,7 +166,9 @@ if __name__ == "__main__":
     TRAVEL_ZONE_MAP = "doc.kml"
     NOISE_DATA = "data/external/Road_LAeq_16h_London/Road_LAeq_16h_London.shp"
     BOROUGH_BOUNDARY = "data/external/london_boroughs.geojson"
-    LOAD_FROM = "data/processed/rent_london2.parquet"
-    SAVE_TO = "data/processed/rent_london_processed2.parquet"
-    processed_data = preprocess_data(LOAD_FROM)
-    processed_data.to_parquet("data/processed/rent_london_processed2.parquet")
+    
+    with open("params.yaml", "r") as f:
+        params = yaml.safe_load(f)
+    
+    processed_data = preprocess_data(params["DATA_DIR"]["CLEANED"])
+    processed_data.to_parquet(params["DATA_DIR"]["PROCESSED"])

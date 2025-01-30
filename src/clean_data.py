@@ -4,6 +4,7 @@ import pandas as pd
 # File handling
 import os
 import json
+import yaml
 
 # Text processing
 import re
@@ -133,6 +134,8 @@ def clean_data(data_dir):
 
 
 if __name__ == "__main__":
-    data_dir = "data/raw"   #  raw data folder with .json files from rightmove
-    cleaned_data = clean_data(data_dir)
-    cleaned_data.to_parquet("data/processed/rent_london2.parquet")
+    with open("params.yaml", "r") as f:
+        params = yaml.safe_load(f)
+        
+    cleaned_data = clean_data(params["DATA_DIR"]["RAW_DIR"])
+    cleaned_data.to_parquet(params["DATA_DIR"]["CLEANED"])

@@ -11,3 +11,4 @@ data.dvc/config
 catboost_info
 models
 .dvc/config
+.idea

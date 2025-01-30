@@ -1,33 +1,47 @@
 stages:
   clean_data:
-    cmd: python src/clean_data.py --input data/raw --output data/processed/rent_london2.parquet
+    cmd: python src/clean_data.py --input data/raw --output data/processed/cleaned.parquet
     deps:
       - data/raw
+      - src/clean_data.py
     outs:
-      - data/processed/rent_london2.parquet
+      - data/processed/cleaned.parquet
 
   feature_engineering:
-    cmd: python src/feature_engineering.py --input data/processed/rent_london2.parquet --output data/processed/rent_london_processed2.parquet
+    cmd: python src/feature_engineering.py --input data/processed/rent_london2.parquet --output data/processed/processed.parquet
     deps:
-      - data/processed/rent_london2.parquet
+      - src/feature_engineering.py 
+      - data/processed/cleaned.parquet
       - data/external/doc.kml
       - data/external/Road_LAeq_16h_London/Road_LAeq_16h_London.shp
       - data/external/london_boroughs.geojson
     outs:
-      - data/processed/rent_london_processed2.parquet
+      - data/processed/processed.parquet
 
   split_data:
-    cmd: python src/split_data.py --input data/processed/rent_london_processed2.parquet --train data/modelling/train.parquet --test data/modelling/test.parquet --test_size 0.2 --random_state 42
+    cmd: python src/split_data.py --data/processed/processed.parquet --train data/modelling/train.parquet --test data/modelling/test.parquet --test_size 0.2 --random_state 42
     deps:
-      - data/processed/rent_london_processed2.parquet
+      - data/processed/processed.parquet
+      - src/split_data.py
     outs:
       - data/modelling/train.parquet
       - data/modelling/test.parquet
 
-  train_model:
-    cmd: python src/train.py --train data/modelling/train.parquet --output models/catboost_model_no_nlp.pkl
+  tune_model:
+    cmd: python src/tune_hyperparameters.py --train data/modelling/train.parquet --output_model models/tuned_model.pkl --output_params models/best_params.pkl
     deps:
+      - src/tune_hyperparameters.py  
       - data/modelling/train.parquet
+      - params.yaml
+    outs:
+      - models/best_params.pkl
+
+  train_model:
+    cmd: python src/train.py --train data/modelling/train.parquet --params models/best_params.pkl --output models/catboost_model_no_nlp.pkl
+    deps:
+      - src/train.py
+      - data/modelling/train.parquet
+      - models/best_params.pkl
     outs:
       - models/catboost_model_no_nlp.pkl
 
@@ -36,5 +50,4 @@ stages:
     deps:
       - data/modelling/test.parquet
       - models/catboost_model_no_nlp.pkl
-
     

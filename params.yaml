@@ -1,0 +1,63 @@
+# params.yaml
+seed: 42
+test_size: 0.2
+
+# Target to predict
+target_col: 'price'  
+
+# Variables to model the target
+FEATURES:
+  numerical_features: 
+    - "latitude"
+    - "longitude"
+    - "distance_to_center"
+    - "angle_from_center"
+    - "distance_to_station1"
+    - "distance_to_station2"
+    - "distance_to_station3"
+  
+  categorical_features:
+    - "bedrooms"
+    - "bathrooms"
+    - "deposit"
+    - "zone"
+    - "borough"
+    - "propertyType"
+    - "furnishType"
+    - "NoiseClass"
+    - "letType"
+    - "TFL1"
+    - "TFL2"
+    - "TFL3"
+    - "RAIL1" 
+    - "RAIL2"
+    - "RAIL3"
+
+# Data: get raw data (rightmove json) -> clean -> feature engineer -> split [Train/Test]
+DATA_DIR:
+  RAW_DIR: "data/raw"
+  CLEANED: "data/processed/cleaned.parquet"
+  PROCESSED: "data/processed/processed.parquet"
+  TRAIN : "data/modelling/train.parquet"
+  TEST : "data/modelling/test.parquet"
+
+model: "catboost"
+
+# Hyperparameter tuning setting All np.random.randint(min,max,step count)
+search_grid_type: 'Random'
+hyperparameters_space:
+  iterations: [500, 2000, 10]    
+  learning_rate: [0.01, 0.3, 10] 
+  depth: [4,12,10]
+  l2_leaf_reg: [0.01, 10, 10] 
+  bagging_temperature: [0.0, 1.0, 10]
+
+scorings_cv: "neg_root_mean_squared_error"
+CV_FOLDS: 5
+n_iter: 20
+
+
+BEST_PARAMS_DIR: "models/best_params.pkl"
+
+# Local model file saved
+SAVED_MODEL: "models/catboost_model_no_nlp.pkl"

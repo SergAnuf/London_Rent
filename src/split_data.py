@@ -1,6 +1,6 @@
 from sklearn.model_selection import StratifiedShuffleSplit
 import pandas as pd
-
+import yaml
 
 def split_data(data_dir, test_size, random_state):
     # Load processed data
@@ -16,11 +16,11 @@ def split_data(data_dir, test_size, random_state):
     
     
 if __name__ == "__main__":
-    test_size = 0.2
-    SEED = 42
-    data_dir =  "data/processed/rent_london_processed2.parquet"
-    train_df, test_df = split_data(data_dir,0.2,SEED)
-    train_df.to_parquet("data/modelling/train.parquet")
-    test_df.to_parquet("data/modelling/test.parquet")
+    with open("params.yaml", "r") as f:
+        params = yaml.safe_load(f)
+   
+    train_df, test_df = split_data(params["DATA_DIR"]["PROCESSED"],params["test_size"],params["seed"])
+    train_df.to_parquet(params["DATA_DIR"]["TRAIN"])
+    test_df.to_parquet(params["DATA_DIR"]["TEST"])
     
     
