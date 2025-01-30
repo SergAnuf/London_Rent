@@ -156,8 +156,9 @@ def preprocess_data(LOAD_FROM):
     
     # outlierts in target
     gdf = gdf[gdf["price"]<threshold]
-
-    return gdf
+    shuffled_df = gdf.sample(frac=1).reset_index(drop=False)
+    
+    return shuffled_df
 
 
 

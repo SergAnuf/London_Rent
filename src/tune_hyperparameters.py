@@ -48,9 +48,9 @@ def main():
         n_iter= params["n_iter"],  
         scoring=params["scorings_cv"],
         cv= params["CV_FOLDS"],
+        n_jobs=-1,
         verbose=3,
-        random_state=params["seed"],
-        refit=True
+        random_state=params["seed"]
     )
 
     # Perform the search

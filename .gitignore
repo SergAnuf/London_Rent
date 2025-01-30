@@ -12,3 +12,4 @@ catboost_info
 models
 .dvc/config
 .idea
+.qodo
