@@ -8,3 +8,6 @@ data
 notebooks/catboost_info
 /test.txt
 data.dvc/config
+catboost_info
+models
+.dvc/config
