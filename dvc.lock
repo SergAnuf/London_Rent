@@ -1,0 +1,81 @@
+schema: '2.0'
+stages:
+  clean_data:
+    cmd: python src/clean_data.py --input data/raw --output data/processed/rent_london2.parquet
+    deps:
+    - path: data/raw
+      hash: md5
+      md5: 999a84d7f56033c8170e5ed74ab5feca.dir
+      size: 1008101004
+      nfiles: 39
+    outs:
+    - path: data/processed/rent_london2.parquet
+      hash: md5
+      md5: 647e70da534aaff0a5e1a8abf7ca2482
+      size: 18583072
+  feature_engineering:
+    cmd: python src/feature_engineering.py --input data/processed/rent_london2.parquet
+      --output data/processed/rent_london_processed2.parquet
+    deps:
+    - path: data/external/Road_LAeq_16h_London/Road_LAeq_16h_London.shp
+      hash: md5
+      md5: c18a2fb655039421755a5a5e3816812b
+      size: 50118152
+    - path: data/external/doc.kml
+      hash: md5
+      md5: 328e81873acdcdffdfac11e9cb856d85
+      size: 109999
+    - path: data/external/london_boroughs.geojson
+      hash: md5
+      md5: 938b61043d22d23d748f0440cdb81306
+      size: 1346444
+    - path: data/processed/rent_london2.parquet
+      hash: md5
+      md5: 647e70da534aaff0a5e1a8abf7ca2482
+      size: 18583072
+    outs:
+    - path: data/processed/rent_london_processed2.parquet
+      hash: md5
+      md5: 4f54f3bb99d55956904226f1353798d6
+      size: 18576400
+  split_data:
+    cmd: python src/split_data.py --input data/processed/rent_london_processed2.parquet
+      --train data/modelling/train.parquet --test data/modelling/test.parquet --test_size
+      0.2 --random_state 42
+    deps:
+    - path: data/processed/rent_london_processed2.parquet
+      hash: md5
+      md5: 4f54f3bb99d55956904226f1353798d6
+      size: 18576400
+    outs:
+    - path: data/modelling/test.parquet
+      hash: md5
+      md5: 52acacedc6372b792ceb4844a2193c47
+      size: 4495355
+    - path: data/modelling/train.parquet
+      hash: md5
+      md5: 5b8e5ac188838f9b43cf1e1bc9f37582
+      size: 17528569
+  train_model:
+    cmd: python src/train.py --train data/modelling/train.parquet --output models/catboost_model_no_nlp.pkl
+    deps:
+    - path: data/modelling/train.parquet
+      hash: md5
+      md5: 5b8e5ac188838f9b43cf1e1bc9f37582
+      size: 17528569
+    outs:
+    - path: models/catboost_model_no_nlp.pkl
+      hash: md5
+      md5: cd5eafc578b5cc3d5322103755da5eb2
+      size: 1695619
+  evaluate_model:
+    cmd: python src/evaluate.py --test data/modelling/test.parquet --model models/catboost_model_no_nlp.pkl
+    deps:
+    - path: data/modelling/test.parquet
+      hash: md5
+      md5: 52acacedc6372b792ceb4844a2193c47
+      size: 4495355
+    - path: models/catboost_model_no_nlp.pkl
+      hash: md5
+      md5: cd5eafc578b5cc3d5322103755da5eb2
+      size: 1695619

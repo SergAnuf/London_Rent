@@ -1,41 +1,40 @@
 stages:
-  get_data:
-    cmd: python scripts/data.py
+  clean_data:
+    cmd: python src/clean_data.py --input data/raw --output data/processed/rent_london2.parquet
     deps:
-      - scripts/data.py
-    params:
-      - index_col
-      - test_size
-      - seed
+      - data/raw
     outs:
-      - data/train_validate.csv
-      - data/test.csv
-  fit_model:
-    cmd: python scripts/fit.py
+      - data/processed/rent_london2.parquet
+
+  feature_engineering:
+    cmd: python src/feature_engineering.py --input data/processed/rent_london2.parquet --output data/processed/rent_london_processed2.parquet
     deps:
-      - data/train_dataset.csv
-      - scripts/fit.py
-    params:
-      - index_col
-      - target_col
-      - one_hot_drop
-      - catboost_params
+      - data/processed/rent_london2.parquet
+      - data/external/doc.kml
+      - data/external/Road_LAeq_16h_London/Road_LAeq_16h_London.shp
+      - data/external/london_boroughs.geojson
     outs:
-      - models/fitted_model.pkl
+      - data/processed/rent_london_processed2.parquet
+
+  split_data:
+    cmd: python src/split_data.py --input data/processed/rent_london_processed2.parquet --train data/modelling/train.parquet --test data/modelling/test.parquet --test_size 0.2 --random_state 42
+    deps:
+      - data/processed/rent_london_processed2.parquet
+    outs:
+      - data/modelling/train.parquet
+      - data/modelling/test.parquet
+
+  train_model:
+    cmd: python src/train.py --train data/modelling/train.parquet --output models/catboost_model_no_nlp.pkl
+    deps:
+      - data/modelling/train.parquet
+    outs:
+      - models/catboost_model_no_nlp.pkl
+
   evaluate_model:
-    cmd: python scripts/evaluate.py
+    cmd: python src/evaluate.py --test data/modelling/test.parquet --model models/catboost_model_no_nlp.pkl
     deps:
-      - models/fitted_model.pkl
-      - scripts/evaluate.py
-      - data/train_validate.csv
-    params:
-      - index_col
-      - target_col
-      - n_splits
-      - n_jobs
-      - metrics
-    outs:
-      - cv_results/cv_res.json
-  
+      - data/modelling/test.parquet
+      - models/catboost_model_no_nlp.pkl
 
     
