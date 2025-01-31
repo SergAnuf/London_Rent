@@ -4,6 +4,7 @@ import joblib
 import numpy as np
 from sklearn.metrics import mean_absolute_error, r2_score
 
+
 def load_data_and_model(test_path, model_path):
     """
     Load the test data and trained model.
@@ -38,18 +39,18 @@ def evaluate_model(model, test_df, features, target):
     """
     y_true = test_df[target].values
     y_pred = model.predict(test_df[features])
-    
+
     # Compute metrics
     mape = np.mean(np.abs((y_true - y_pred) / y_true)) * 100
     mae = mean_absolute_error(y_true, y_pred)
     r2 = r2_score(y_true, y_pred)
-    
+
     metrics = {
         "MAPE": mape,
         "MAE": mae,
         "R²": r2
     }
-    
+
     return y_true, y_pred, metrics
 
 
@@ -66,13 +67,13 @@ def plot_feature_importance(model, feature_names):
         'Feature': feature_names,
         'Importance': feature_importances
     }).sort_values(by='Importance', ascending=False)
-    
+
     plt.figure(figsize=(10, 6))
     plt.barh(importance_df['Feature'], importance_df['Importance'], color='skyblue')
     plt.xlabel('Importance')
     plt.ylabel('Feature')
     plt.title('Feature Importance - CatBoost')
-    plt.gca().invert_yaxis()  
+    plt.gca().invert_yaxis()
     plt.show()
 
 
@@ -91,23 +92,23 @@ def main(test_path, model_path):
     ]
     categorical_features = [
         "bedrooms", "bathrooms", "deposit", "zone", "borough", "propertyType",
-        "furnishType", "NoiseClass", "letType", 
+        "furnishType", "NoiseClass", "letType",
         "TFL1", "TFL2", "TFL3", "RAIL1", "RAIL2", "RAIL3"
     ]
     features = numerical_features + categorical_features
     target = "price"
-    
+
     # Load data and model
     test_df, model = load_data_and_model(test_path, model_path)
-    
+
     # Evaluate the model
     y_true, y_pred, metrics = evaluate_model(model, test_df, features, target)
-    
+
     # Print metrics
     print(f"MAPE: {metrics['MAPE']:.2f}%")
     print(f"MAE: {metrics['MAE']:.2f}")
     print(f"R²: {metrics['R²']:.2f}")
-    
+
     # Plot feature importance
     plot_feature_importance(model, features)
 
@@ -116,6 +117,6 @@ if __name__ == "__main__":
     # Define paths
     test_path = "data/modelling/test.parquet"
     model_path = "models/catboost_model_no_nlp.pkl "
-    
+
     # Run evaluation
     main(test_path, model_path)

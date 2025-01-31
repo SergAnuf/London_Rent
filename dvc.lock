@@ -10,8 +10,8 @@ stages:
       nfiles: 39
     - path: src/clean_data.py
       hash: md5
-      md5: c4a1181976c64599d5901fd9f6499c09
-      size: 4867
+      md5: 93054f10d301b423ffee09cf685d0625
+      size: 4788
     outs:
     - path: data/processed/cleaned.parquet
       hash: md5
@@ -39,84 +39,84 @@ stages:
       size: 18583072
     - path: src/feature_engineering.py
       hash: md5
-      md5: d1a735d473a2d6c3b73bb47291c48993
-      size: 6784
+      md5: 490a998d73554da7f76fe5256cfdc181
+      size: 6754
     outs:
     - path: data/processed/processed.parquet
       hash: md5
-      md5: df7ab5d4fdcb7d07fb364cd945102d3c
-      size: 21899011
+      md5: aac0d7ef694eaa0dd80f00703b111ea6
+      size: 21878712
   split_data:
     cmd: python src/split_data.py --data/processed/processed.parquet --train data/modelling/train.parquet
       --test data/modelling/test.parquet --test_size 0.2 --random_state 42
     deps:
     - path: data/processed/processed.parquet
       hash: md5
-      md5: df7ab5d4fdcb7d07fb364cd945102d3c
-      size: 21899011
+      md5: aac0d7ef694eaa0dd80f00703b111ea6
+      size: 21878712
     - path: src/split_data.py
       hash: md5
-      md5: a91f1e9ce0538efe0a2eb795c8b1b1c1
-      size: 884
+      md5: d7168a1e0df7392140d8d4eac304a2a8
+      size: 858
     outs:
     - path: data/modelling/test.parquet
       hash: md5
-      md5: a6aac8d6f13d201b51e14ff6516ca617
-      size: 4503464
+      md5: 802cbad07caeeec8ce19d9f61cdf6a56
+      size: 4519171
     - path: data/modelling/train.parquet
       hash: md5
-      md5: d242dc7b2a12b24cf280de8818b5d0db
-      size: 17641399
+      md5: 6f5d92d5fcddfa79038eedba2f2534b9
+      size: 17650064
   train_model:
     cmd: python src/train.py --train data/modelling/train.parquet --params models/best_params.pkl
       --output models/catboost_model_no_nlp.pkl
     deps:
     - path: data/modelling/train.parquet
       hash: md5
-      md5: d242dc7b2a12b24cf280de8818b5d0db
-      size: 17641399
+      md5: 6f5d92d5fcddfa79038eedba2f2534b9
+      size: 17650064
     - path: models/best_params.pkl
       hash: md5
-      md5: 1668e7c828ace43814c7fe123e4060ac
+      md5: 2c0cf05255f2b5df5cfc9a90f131be5d
       size: 303
     - path: src/train.py
       hash: md5
-      md5: 6f8a232bcc8b336eefa8ff3bf90a8bb6
-      size: 1241
+      md5: 59c7d61a73e4b5e0beb1cf042c8d3c3f
+      size: 1223
     outs:
     - path: models/catboost_model_no_nlp.pkl
       hash: md5
-      md5: b16f5fed928e9a8d42e87ae85fa0bea7
-      size: 39240585
+      md5: 7d226328e01a0aa9ce564015976f76fd
+      size: 19318349
   evaluate_model:
     cmd: python src/evaluate.py --test data/modelling/test.parquet --model models/catboost_model_no_nlp.pkl
     deps:
     - path: data/modelling/test.parquet
       hash: md5
-      md5: a6aac8d6f13d201b51e14ff6516ca617
-      size: 4503464
+      md5: 802cbad07caeeec8ce19d9f61cdf6a56
+      size: 4519171
     - path: models/catboost_model_no_nlp.pkl
       hash: md5
-      md5: b16f5fed928e9a8d42e87ae85fa0bea7
-      size: 39240585
+      md5: 7d226328e01a0aa9ce564015976f76fd
+      size: 19318349
   tune_model:
     cmd: python src/tune_hyperparameters.py --train data/modelling/train.parquet --output_model
       models/tuned_model.pkl --output_params models/best_params.pkl
     deps:
     - path: data/modelling/train.parquet
       hash: md5
-      md5: d242dc7b2a12b24cf280de8818b5d0db
-      size: 17641399
+      md5: 6f5d92d5fcddfa79038eedba2f2534b9
+      size: 17650064
     - path: params.yaml
       hash: md5
       md5: c6c5db61a3b71509eec25528592f831a
       size: 1366
     - path: src/tune_hyperparameters.py
       hash: md5
-      md5: a15f16b255ea1c86e02d183054e7d82d
-      size: 2033
+      md5: 23fa7abdabc55622b6abf152b1ced96f
+      size: 1924
     outs:
     - path: models/best_params.pkl
       hash: md5
-      md5: 1668e7c828ace43814c7fe123e4060ac
+      md5: 2c0cf05255f2b5df5cfc9a90f131be5d
       size: 303

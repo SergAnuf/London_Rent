@@ -14,15 +14,16 @@ import yaml
 
 threshold = 10000
 
+
 def compute_angle(lat, lon, center_lat, center_lon):
     """Compute the angle of a point relative to a center point."""
     lat1, lon1 = np.radians(center_lat), np.radians(center_lon)
     lat2, lon2 = np.radians(lat), np.radians(lon)
-    
+
     dlon = lon2 - lon1
     x = np.cos(lat2) * np.sin(dlon)
     y = np.cos(lat1) * np.sin(lat2) - np.sin(lat1) * np.cos(lat2) * np.cos(dlon)
-    
+
     angle = np.arctan2(x, y)
     return angle
 
@@ -39,16 +40,16 @@ def create_london_h3_index(london_boundaries, resolution=9):
     """Create an H3 hexagon index for London."""
     london_polygon = london_boundaries.union_all()
     hexagons = h3.polyfill(london_polygon.__geo_interface__, res=resolution)
-    
+
     def hex_to_polygon(hex_id):
         boundary = h3.h3_to_geo_boundary(hex_id, geo_json=True)
         return Polygon(boundary)
-    
+
     hex_data = {
         "hex_id": list(hexagons),
         "geometry": [hex_to_polygon(h) for h in hexagons]
     }
-    
+
     hex_df = pd.DataFrame(hex_data)
     hex_gdf = gpd.GeoDataFrame(hex_df, geometry='geometry')
     return hex_gdf
@@ -60,12 +61,11 @@ def reduce_cardinality_station_type(x, station_map):
     return list(set(new_list))
 
 
-
 def preprocess_data(LOAD_FROM):
     # Load data
     df = pd.read_parquet(LOAD_FROM)
     london_boundaries = gpd.read_file('data/external/london_boroughs.geojson')
-    
+
     output_dir = "data/external"
     kml_file = os.path.join(output_dir, 'doc.kml')
     zone_fares = gpd.read_file(kml_file)
@@ -130,7 +130,8 @@ def preprocess_data(LOAD_FROM):
     gdf[['bedrooms', 'bathrooms']] = gdf[['bedrooms', 'bathrooms']].astype(int)
 
     # Filter property types
-    accepted_pr_types = ["Flat", "Apartment", "Terraced", "House", "Semi-Detached", "Maisonette", "House Share", "Detached", "End of Terrace", "Penthouse", "Flat Share"]
+    accepted_pr_types = ["Flat", "Apartment", "Terraced", "House", "Semi-Detached", "Maisonette", "House Share",
+                         "Detached", "End of Terrace", "Penthouse", "Flat Share"]
     gdf["propertyType"] = gdf["propertyType"].apply(lambda x: x if x in accepted_pr_types else "other")
 
     # Remove outliers
@@ -148,28 +149,26 @@ def preprocess_data(LOAD_FROM):
     for keyword, term in keywords.items():
         for station_type in station_types:
             gdf[f"{keyword}{station_types.index(station_type) + 1}"] = gdf[station_type].apply(lambda x: term in x)
-            
+
     # Quick patch for letType and furnishType : TO DO investigate these NaNs further and try a better NaNs handling
 
     gdf["letType"] = gdf["letType"].fillna("not_specified")
     gdf["furnishType"] = gdf["furnishType"].fillna("uknown")
-    
+
     # outlierts in target
-    gdf = gdf[gdf["price"]<threshold]
+    gdf = gdf[gdf["price"] < threshold]
     shuffled_df = gdf.sample(frac=1).reset_index(drop=False)
-    
+
     return shuffled_df
 
 
-
 if __name__ == "__main__":
-    
     TRAVEL_ZONE_MAP = "doc.kml"
     NOISE_DATA = "data/external/Road_LAeq_16h_London/Road_LAeq_16h_London.shp"
     BOROUGH_BOUNDARY = "data/external/london_boroughs.geojson"
-    
+
     with open("params.yaml", "r") as f:
         params = yaml.safe_load(f)
-    
+
     processed_data = preprocess_data(params["DATA_DIR"]["CLEANED"])
     processed_data.to_parquet(params["DATA_DIR"]["PROCESSED"])
