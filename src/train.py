@@ -4,6 +4,8 @@ import joblib
 import yaml
 import pickle
 
+print("hello world")
+
 
 def load_best_params_pickle(input_path):
     """Load the best parameters from a pickle file"""

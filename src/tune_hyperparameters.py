@@ -7,6 +7,7 @@ from sklearn.model_selection import RandomizedSearchCV
 from sklearn.metrics import mean_squared_error
 import pandas as pd
 
+print("hello feature engineering")
 
 def save_best_params_pickle(params, output_path):
     """Save best parameters using pickle"""

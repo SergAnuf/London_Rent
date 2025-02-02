@@ -10,6 +10,7 @@ import yaml
 import re
 
 
+print("hello world")
 def get_stations(data):
     """Extract nearest station data from a list of property JSONs."""
     processed_data = []

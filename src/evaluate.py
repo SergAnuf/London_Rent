@@ -4,7 +4,7 @@ import joblib
 import numpy as np
 from sklearn.metrics import mean_absolute_error, r2_score
 
-
+print("hello world")
 def load_data_and_model(test_path, model_path):
     """
     Load the test data and trained model.

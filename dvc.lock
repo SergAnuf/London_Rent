@@ -10,8 +10,8 @@ stages:
       nfiles: 39
     - path: src/clean_data.py
       hash: md5
-      md5: 93054f10d301b423ffee09cf685d0625
-      size: 4788
+      md5: 14875d88414b223f05b24c0936675068
+      size: 4809
     outs:
     - path: data/processed/cleaned.parquet
       hash: md5
