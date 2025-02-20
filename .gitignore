@@ -13,3 +13,5 @@ models
 .dvc/config
 .idea
 .qodo
+src/utils/__pycache__
+notebooks/wandb
